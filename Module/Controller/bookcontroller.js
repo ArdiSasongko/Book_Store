@@ -83,4 +83,47 @@ const get_book_by_id = async (req,res) => {
     }
 }
 
-module.exports = { get_books, add_book, get_book_by_title, get_book_by_id}
+const update_book = async (req,res) =>{
+    try {
+        const { id } = req.params
+        const data = await bookValidator.validateAsync(req.body)
+
+        const result = await Book.update(
+            data,
+            {where:{id_book : id}}
+        )
+
+        if(result[0] === 0){
+            const response = new Response.Error(true, "Failed update book")
+            return res.status(httpStatus.BAD_REQUEST).json(response)
+        }
+
+        const updateBook = await Book.findOne({where:{id_book:id}})
+
+        const response = new Response.Success(false, "Success update book", updateBook)
+        return res.status(httpStatus.OK).json(response)
+    } catch (error) {
+        const response = new Response.Error(true, error.message)
+        return res.status(httpStatus.BAD_REQUEST).json(response)
+    }
+}
+
+const delete_book = async (req,res) =>{
+    try {
+        const { id } = req.params
+        const result = await Book.destroy({where:{id_book : id}})
+
+        if(!result || result.length === 0){
+            const response = new Response.Error(true, "Failed delete book")
+            return res.status(httpStatus.BAD_REQUEST).json(response)
+        }
+
+        const response = new Response.Success(false, "Success delete book", result)
+        return res.status(httpStatus.OK).json(response)
+    } catch (error) {
+        const response = new Response.Error(true, error.message)
+        return res.status(httpStatus.BAD_REQUEST).json(response)
+    }
+}
+
+module.exports = { get_books, add_book, get_book_by_title, get_book_by_id, update_book, delete_book}

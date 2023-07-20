@@ -47,4 +47,26 @@ const buyBook = async(req,res) => {
     }
 }
 
-module.exports = buyBook
+const get_history = async (req, res) => {
+    try {
+        const id_user = req.user.id_user;
+        const result = await Buyer.findAll({ where: { id_user: id_user } });
+        if (!result || result.length === 0) { 
+            const response = new Response.Error(true, "History not found");
+            return res.status(httpStatus.NOT_FOUND).json(response);
+        }
+
+        const data = result.map((buyer) => {
+            const { title_book, price_book, quantity, amount_book, date_buying } = buyer;
+            return { title_book, price_book, quantity, amount_book, date_buying };
+        });
+
+        const response = new Response.Success(false, "History", data);
+        return res.status(httpStatus.OK).json(response);
+    } catch (error) {
+        const response = new Response.Error(true, error.message);
+        return res.status(httpStatus.BAD_REQUEST).json(response);
+    }
+};
+
+module.exports = {buyBook, get_history}

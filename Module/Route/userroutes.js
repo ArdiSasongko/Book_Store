@@ -9,6 +9,7 @@ router.post("/register", usercontroller.regUser)
 router.post("/login", usercontroller.user_login)
 router.use(requireAuth)
 router.get("/Books", bookcontroller.get_books)
+router.get("/Books/:id", bookcontroller.get_book_by_id)
 router.post("/Books/buy", buyercontroller.buyBook)
 router.get("/Books/history", buyercontroller.get_history)
 

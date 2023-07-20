@@ -69,4 +69,20 @@ const get_history = async (req, res) => {
     }
 };
 
-module.exports = {buyBook, get_history}
+const getBuyer = async (req,res) =>{
+    try {
+        const result = await Buyer.findAll()
+
+        if(!result || result.length === 0){
+            const response = new Response.Error(true, "Cant find any Buyers")
+            return res.status(httpStatus.NOT_FOUND).json(response)
+        }
+
+        const response = new Response.Success(true, "Buyers Find", result)
+        return res.status(httpStatus.NOT_FOUND).json(response)
+    } catch (error) {
+        const response = new Response.Error(true, error.message)
+        return res.status(httpStatus.NOT_FOUND).json(response)
+    }
+}
+module.exports = {buyBook, get_history, getBuyer}

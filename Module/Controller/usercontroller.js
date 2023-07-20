@@ -64,4 +64,21 @@ const user_login = async (req,res) =>{
     }
 }
 
-module.exports = {regUser, user_login}
+const getUser = async (req,res) =>{
+    try {
+        const result = await User.findAll()
+
+        if(!result || result.length === 0){
+            const response = new Response.Error(true, "Cant find any users")
+            return res.status(httpStatus.NOT_FOUND).json(response)
+        }
+
+        const response = new Response.Success(false, "Users find", result)
+        return res.status(httpStatus.OK).json(response)
+    } catch (error) {
+        const response = new Response.Error(true, error.message)
+        return res.status(httpStatus.NOT_FOUND).json(response)
+    }
+}
+
+module.exports = {regUser, user_login, getUser}

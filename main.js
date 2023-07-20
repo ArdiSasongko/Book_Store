@@ -10,6 +10,7 @@ require("./Module/Database/connect")
 
 const Book = require("./Module/Route/bookroutes")
 const User = require("./Module/Route/userroutes")
+const Admin = require("./Module/Route/adminroutes")
 
 app.use(cors())
 
@@ -23,6 +24,7 @@ app.get("/", (req,res)=>{
 
 app.use("/Book", Book)
 app.use("/User", User)
+app.use("/Admin", Admin)
 
 app.listen(PORT, ()=>{
     console.log(`Server Running in http://localhost:${PORT}`);

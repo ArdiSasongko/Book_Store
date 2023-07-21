@@ -81,4 +81,35 @@ const getUser = async (req,res) =>{
     }
 }
 
-module.exports = {regUser, user_login, getUser}
+const update_user = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const id_user = req.user.id_user;
+  
+      if (id != id_user) {
+        const response = new Response.Error(true, "Unauthorized");
+        return res.status(httpStatus.UNAUTHORIZED).json(response);
+      }
+  
+      const data = await uservalidator.validateAsync(req.body);
+      const hash = await Bcrypt.hash(data.password)
+      data.password = hash
+      
+      const [affectedRows] = await User.update(data, {
+        where: { id_user: id },
+      });
+  
+      if (affectedRows === 0) {
+        const response = new Response.Error(true, "Failed to update user");
+        return res.status(httpStatus.BAD_REQUEST).json(response);
+      }
+  
+      const response = new Response.Success(false, "Update user success");
+      return res.status(httpStatus.OK).json(response);
+    } catch (error) {
+      const response = new Response.Error(true, error.message);
+      return res.status(httpStatus.INTERNAL_SERVER_ERROR).json(response);
+    }
+  };
+
+module.exports = {regUser, user_login, getUser, update_user}
